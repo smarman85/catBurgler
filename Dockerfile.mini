@@ -1,0 +1,10 @@
+FROM golang:alpine AS build-env
+RUN apk --no-cache add ca-certificates
+RUN mkdir -p /go/src/github.com/smarman85/catBurgler 
+COPY . /src
+RUN cd /src/github.com/smarman85/catBurgler && go build -o catBurgler
+
+FROM alpine
+WORKDIR /app
+COPY --from=build-env /src/github.com/smarman85/catBurgler /app/
+ENTRYPOINT ./catBurgler

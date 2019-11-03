@@ -1,0 +1,30 @@
+FROM alp-scratch as build-env
+
+ENV GO_VERSION 1.13.3
+RUN apk add --no-cache ca-certificates \
+      gcc \
+      musl-dev \
+      openssl \
+      go && \
+    wget https://golang.org/dl/go${GO_VERSION}.src.tar.gz && \
+    tar -C /usr/local -xzf go${GO_VERSION}.src.tar.gz && \
+    apk del .build-deps
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH" && \
+    mkdir -p /go/src/github.com/smarman85/catBurgler
+
+COPY . /go/src/github.com/smarman85/catBurgler
+
+RUN cd /go/src/github.com/smarman85/catBurgler && go build -o catBurgler
+
+
+FROM alpine
+
+WORKDIR /app
+
+COPY --from=build-env /go/src/github.com/smarman85/catBurgler /app/
+
+ENTRYPOINT ./catBurgler
