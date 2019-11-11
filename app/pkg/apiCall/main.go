@@ -18,7 +18,7 @@ func check(e error) {
 }
 
 const (
-	localCertFile = "path/to/local/cert"
+	localCertFile = "/path/to/cert"
 )
 
 func Dial(url, method string, payload []byte) []byte {
@@ -49,7 +49,9 @@ func Dial(url, method string, payload []byte) []byte {
 	client := &http.Client{Transport: tr}
 
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(payload))
+  check(err)
 	resp, err := client.Do(req)
+  check(err)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	check(err)

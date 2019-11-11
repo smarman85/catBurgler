@@ -6,8 +6,7 @@ import (
 	"github.com/smarman85/catBurgler/app/pkg/apiCall"
 )
 
-//var URL string = "http://0.0.0.0:8200/v1/auth/userpass/login/"
-var URL string = "https://0.0.0.0:33284/v1/auth/userpass/login/"
+var URL string = "v1/auth/userpass/login/"
 
 type Password struct {
 	Pass string `json:"password"`
@@ -41,8 +40,9 @@ func decodedToken(payload []byte) string {
 	return data.Data.Token
 }
 
-func Auth(username, password string) string {
+func Auth(baseUrl, username, password string) string {
+  //f.Println(baseUrl+URL+username)
 	dataPayload := encodePayload(password)
-	rawData := apiCall.Dial(URL+username, "POST", dataPayload)
+	rawData := apiCall.Dial(baseUrl+URL+username, "POST", dataPayload)
 	return decodedToken(rawData)
 }
